@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 type CampaignStatus = 'ACTIVE' | 'FLAGGED' | 'UNDER REVIEW' | 'ESCROW FROZEN';
 type ViolationSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -85,6 +85,52 @@ export default function BrandCommandCenter() {
     { type: 'COMPATIBILITY', message: 'Chiara Ferragni brand compatibility score updated: 94%', severity: 'LOW' },
   ]);
 
+  const [webhookEvents, setWebhookEvents] = useState([
+    { ts: '13:42:07', level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: '@fashionnova_ flagged by AI - 94% confidence. Escrow frozen. Campaign CP-001 under review.', color: '#ef4444', transcript: '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=94%\n[13:42:10] ESCROW_FROZE triggered for CP-001 - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED', confidence: 94 },
+    { ts: '13:42:10', level: 'ACTION', title: 'Escrow Payment Frozen', description: '$12,400 held in escrow for CP-001 / @fashionnova_ pending HOTL review.', color: '#a78bfa' },
+    { ts: '13:42:11', level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign CP-001 status set to FLAGGED. AI confidence 94% exceeds threshold.', color: '#f59e0b' },
+  ]);
+  const [webhookActive, setWebhookActive] = useState(true);
+  const [hotlModal, setHotlModal] = useState<null|{campaign:{id:string,brand:string,influencer:string,budget:string,aiScore:number};violation:{type:string,confidence:number,transcript:string,action:string};auditEntry:{timestamp:string,actor:string,action:string,outcome:string,target:string}}>(null);
+
+  const triggerWebhook = useCallback(() => {
+    const ids = ['CP-001','CP-002','CP-003','CP-004','CP-005','CP-006','CP-007','CP-008'];
+    const infs = ['@fashionnova_','@glowbygrace','@stylemark','@luxe.edit','@everydayelegance','@minimalist.style','@aesthetic.ly','@streetwearh'];
+    const conf = 72 + Math.floor(Math.random() * 26);
+    const cid = ids[Math.floor(Math.random() * ids.length)];
+    const inf = infs[Math.floor(Math.random() * infs.length)];
+    const now = new Date().toTimeString().slice(0, 8);
+    const tx = '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=' + conf + '%\n[13:42:10] ESCROW_FROZE triggered for ' + cid + ' - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED';
+    const evs = [
+      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: inf + ' flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#ef4444', transcript: tx, confidence: conf },
+      { ts: now, level: 'ACTION', title: 'Escrow Payment Frozen', description: '$12,400 held in escrow for ' + cid + ' / ' + inf + ' pending HOTL review.', color: '#a78bfa' },
+      { ts: now, level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign ' + cid + ' status set to FLAGGED. AI confidence ' + conf + '% exceeds threshold.', color: '#f59e0b' },
+    ];
+    setWebhookActive(true);
+    setWebhookEvents(prev => [...evs, ...prev]);
+    setHotlModal({ campaign: { id: cid, brand: 'Meshki', influencer: inf, budget: '$12,400', aiScore: conf }, violation: { type: 'Fake Engagement Pattern', confidence: conf, transcript: tx, action: 'ESCROW_FROZEN' }, auditEntry: { timestamp: now, actor: 'AI Agent', action: 'ESCROW_FROZEN', outcome: 'frozen', target: cid + ' / ' + inf } });
+    setTimeout(() => setWebhookActive(false), 10000);
+  }, []);
+
+
+  useEffect(() => {
+    const ids = ['CP-001','CP-002','CP-003','CP-004','CP-005','CP-006','CP-007','CP-008'];
+    const infs = ['@fashionnova_','@glowbygrace','@stylemark','@luxe.edit','@everydayelegance','@minimalist.style','@aesthetic.ly','@streetwearh'];
+    const conf = 72 + Math.floor(Math.random() * 26);
+    const cid = ids[Math.floor(Math.random() * ids.length)];
+    const inf = infs[Math.floor(Math.random() * infs.length)];
+    const now = new Date().toTimeString().slice(0, 8);
+    const tx = '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=' + conf + '%\n[13:42:10] ESCROW_FROZE triggered for ' + cid + ' - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED';
+    const evs = [
+      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: inf + ' flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#ef4444', transcript: tx, confidence: conf },
+      { ts: now, level: 'ACTION', title: 'Escrow Payment Frozen', description: '$12,400 held in escrow for ' + cid + ' / ' + inf + ' pending HOTL review.', color: '#a78bfa' },
+      { ts: now, level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign ' + cid + ' status set to FLAGGED. AI confidence ' + conf + '% exceeds threshold.', color: '#f59e0b' },
+    ];
+    setWebhookActive(true);
+    setWebhookEvents(prev => [...evs, ...prev]);
+    setHotlModal({ campaign: { id: cid, brand: 'Meshki', influencer: inf, budget: '$12,400', aiScore: conf }, violation: { type: 'Fake Engagement Pattern', confidence: conf, transcript: tx, action: 'ESCROW_FROZEN' }, auditEntry: { timestamp: now, actor: 'AI Agent', action: 'ESCROW_FROZEN', outcome: 'frozen', target: cid + ' / ' + inf } });
+    setTimeout(() => setWebhookActive(false), 10000);
+  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
@@ -168,6 +214,49 @@ export default function BrandCommandCenter() {
           <div style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Active Violations</div>
           <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b' }}>{violations.length}</div>
           <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>require attention</div>
+        </div>
+      </div>
+
+      <div style={{ padding: '0 32px 20px' }}>
+        <div style={{ border: '1px solid rgba(239,68,68,0.3)', background: 'linear-gradient(135deg,#0f172a,#1a0a0a)', borderRadius: 12, padding: '16px 20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: webhookActive ? '#ef4444' : '#475569', animation: webhookActive ? 'ping 1s infinite' : 'none' }} />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em' }}>AI Threat Detection - Live Webhook Stream</span>
+            </div>
+            <span style={{ fontSize: '10px', color: '#475569', fontFamily: 'monospace' }}>{webhookActive ? 'MONITORING' : 'STANDBY'}</span>
+          </div>
+          <div style={{ display: 'grid', gap: 8 }}>
+            {webhookEvents.map((ev, i) => (
+              <div key={i} style={{ padding: '10px 12px', borderRadius: 8, background: ev.color + '10', border: '1px solid ' + ev.color + '28', animation: 'slideUp 0.4s ease both' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: '9px', padding: '2px 5px', borderRadius: 3, background: ev.color + '22', color: ev.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ev.level}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#f1f5f9' }}>{ev.title}</span>
+                  </div>
+                  <span style={{ fontSize: '10px', color: '#475569', fontFamily: 'monospace' }}>{ev.ts}</span>
+                </div>
+                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: ev.transcript ? 6 : 0 }}>{ev.description}</div>
+                {ev.transcript && (
+                  <div style={{ background: '#030712', borderRadius: 6, padding: '8px 10px', fontFamily: 'monospace', fontSize: '10px', color: '#64748b', whiteSpace: 'pre-wrap', marginBottom: 6, border: '1px solid #1e293b' }}>
+                    <div style={{ color: '#475569', marginBottom: 2, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>AI Transcript</div>
+                    {ev.transcript}
+                  </div>
+                )}
+                {ev.confidence !== undefined && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ flex: 1, height: 3, background: '#1e293b', borderRadius: 3, overflow: 'hidden' }}>
+                      <div style={{ width: ev.confidence + '%', height: '100%', background: ev.confidence > 80 ? '#ef4444' : ev.confidence > 60 ? '#f59e0b' : '#34d399', borderRadius: 3 }} />
+                    </div>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: ev.confidence > 80 ? '#ef4444' : '#f59e0b', fontFamily: 'monospace' }}>{ev.confidence}%</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <button onClick={triggerWebhook} style={{ marginTop: 12, width: '100%', padding: '8px', borderRadius: 8, border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.05)', color: '#ef4444', fontWeight: 700, fontSize: '11px', cursor: 'pointer', fontFamily: 'monospace', letterSpacing: '0.06em' }}>
+            [ SIMULATE WEBHOOK TRIGGER ]
+          </button>
         </div>
       </div>
 
