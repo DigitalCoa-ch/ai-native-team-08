@@ -46,6 +46,13 @@ const realInfluencers = [
   { name: 'Emma Chamberlain', handle: '@emmachamberlain', followers: '18M', engagement: '7.2%', category: 'Lifestyle & Fashion', compatibility: 88, riskLevel: 14, sentiment: 85 },
   { name: 'Tiffany Young', handle: '@tiffanyyoung', followers: '8M', engagement: '4.8%', category: 'K-Pop & Fashion', compatibility: 85, riskLevel: 22, sentiment: 78 },
   { name: 'Alexandra Saint Mleux Leclerc', handle: '@alexandrasaintmleuxleclerc', followers: '2.1M', engagement: '4.8%', category: 'Luxury Lifestyle & Fashion', compatibility: 94, riskLevel: 11, sentiment: 91 },
+  { name: 'Chiara Ferragni', handle: '@chiaraferragni', followers: '29.8M', engagement: '3.2%', category: 'Luxury Fashion', compatibility: 94, riskLevel: 12, sentiment: 87 },
+  { name: 'Kylie Jenner', handle: '@kyliejenner', followers: '400M', engagement: '2.8%', category: 'Beauty & Fashion', compatibility: 89, riskLevel: 18, sentiment: 82 },
+  { name: 'Addison Rae', handle: '@addisonraee', followers: '88M', engagement: '5.1%', category: 'Gen-Z Fashion', compatibility: 91, riskLevel: 8, sentiment: 91 },
+  { name: 'Hailey Bieber', handle: '@haileybieber', followers: '52M', engagement: '4.1%', category: 'Fashion & Beauty', compatibility: 92, riskLevel: 10, sentiment: 89 },
+  { name: 'Emma Chamberlain', handle: '@emmachamberlain', followers: '18M', engagement: '7.2%', category: 'Lifestyle & Fashion', compatibility: 88, riskLevel: 14, sentiment: 85 },
+  { name: 'Tiffany Young', handle: '@tiffanyyoung', followers: '8M', engagement: '4.8%', category: 'K-Pop & Fashion', compatibility: 85, riskLevel: 22, sentiment: 78 },
+  { name: 'Bella Poarch', handle: '@bellapoarch', followers: '22M', engagement: '6.3%', category: 'Entertainment & Fashion', compatibility: 76, riskLevel: 35, sentiment: 68 },
 ];
 
 function getStatusColor(s: string) { return { ACTIVE: '#10b981', FLAGGED: '#f59e0b', 'UNDER REVIEW': '#3b82f6', 'ESCROW FROZEN': '#ef4444' }[s] || '#6b7280'; }

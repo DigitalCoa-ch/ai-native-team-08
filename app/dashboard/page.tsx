@@ -26,7 +26,7 @@ interface LogEntry {
 }
 
 const CAMPAIGNS: Campaign[] = [
-  { id: 'CP-001', brand: 'Meshki', influencer: '@fashionnova_', platform: 'Instagram', budget: '$12,400', status: 'ACTIVE', aiScore: 91, escrowFrozen: false, lastUpdate: '2s ago', postsDue: 4, postsDelivered: 2 },
+  { id: 'CP-001', brand: 'Meshki', influencer: '@alexandrasaintmleuxleclerc', platform: 'Instagram', budget: '$24,000', status: 'ACTIVE', aiScore: 94, escrowFrozen: false, lastUpdate: '2s ago', postsDue: 6, postsDelivered: 4 },
   { id: 'CP-002', brand: 'Meshki', influencer: '@glowbygrace', platform: 'TikTok', budget: '$8,200', status: 'UNDER REVIEW', aiScore: 67, escrowFrozen: false, lastUpdate: '14s ago', postsDue: 3, postsDelivered: 1 },
   { id: 'CP-003', brand: 'Meshki', influencer: '@stylemark', platform: 'Instagram', budget: '$5,100', status: 'FLAGGED', aiScore: 38, escrowFrozen: false, lastUpdate: '31s ago', postsDue: 2, postsDelivered: 0 },
   { id: 'CP-004', brand: 'Meshki', influencer: '@luxe.edit', platform: 'YouTube', budget: '$22,000', status: 'ACTIVE', aiScore: 88, escrowFrozen: false, lastUpdate: '1m ago', postsDue: 6, postsDelivered: 6 },
@@ -37,6 +37,7 @@ const CAMPAIGNS: Campaign[] = [
 ];
 
 const VIOLATION_POOL = [
+  { campaignId: 'CP-001', influencer: '@alexandrasaintmleuxleclerc', severity: 'low' as ViolationSeverity, type: 'Sentiment Watch', description: 'Minor engagement dip detected -3.2% below 7-day average, within normal variance' },
   { campaignId: 'CP-001', influencer: '@fashionnova_', severity: 'critical' as ViolationSeverity, type: 'Fake Engagement Pattern', description: 'Bot-like follower spike detected - 340% above baseline' },
   { campaignId: 'CP-002', influencer: '@glowbygrace', severity: 'high' as ViolationSeverity, type: 'Sentiment Shift', description: 'Negative sentiment ratio crossed 0.4 threshold in last 48h' },
   { campaignId: 'CP-003', influencer: '@stylemark', severity: 'high' as ViolationSeverity, type: 'Brand Mismatch', description: 'Content tone incompatible with brand guidelines score 0.78' },
@@ -48,6 +49,7 @@ const VIOLATION_POOL = [
 ];
 
 const AUDIT_SEED: AuditEntry[] = [
+  { id: 11, timestamp: '17:12:00', actor: 'System', action: 'AI_SCAN_COMPLETE', target: 'CP-001 / @alexandrasaintmleuxleclerc', outcome: 'approved' },
   { id: 1, timestamp: '17:08:42', actor: 'System', action: 'ESCROW_RELEASED', target: 'CP-001 / @fashionnova_', outcome: 'approved' },
   { id: 2, timestamp: '17:07:15', actor: 'Analyst', action: 'FLAGGED_CAMPAIGN', target: 'CP-003 / @stylemark', outcome: 'flagged' },
   { id: 3, timestamp: '17:05:01', actor: 'System', action: 'AI_SCAN_COMPLETE', target: 'CP-006 / @minimalist.style', outcome: 'approved' },
@@ -127,7 +129,7 @@ export default function Dashboard() {
     const now = new Date().toTimeString().slice(0, 8);
     const tx = '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=' + conf + '%\n[13:42:10] ESCROW_FROZE triggered for ' + cid + ' - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED';
     const evs = [
-      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: inf + ' flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#ef4444', transcript: tx, confidence: conf },
+      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: '@alexandrasaintmleuxleclerc flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#ef4444', transcript: tx, confidence: conf },
       { ts: now, level: 'ACTION', title: 'Escrow Payment Frozen', description: '$12,400 held in escrow for ' + cid + ' / ' + inf + ' pending HOTL review.', color: '#a78bfa' },
       { ts: now, level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign ' + cid + ' status set to FLAGGED. AI confidence ' + conf + '% exceeds threshold.', color: '#f59e0b' },
     ];
