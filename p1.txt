@@ -1,0 +1,23 @@
+'use client';
+import { useEffect, useState, useCallback } from 'react';
+type CampaignStatus = 'ACTIVE' | 'FLAGGED' | 'UNDER REVIEW' | 'ESCROW FROZEN';
+type ViolationSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+interface Campaign { id: string; name: string; influencer: string; status: CampaignStatus; budget: string; escrowBalance: string; aiConfidence: number; violations: number; lastActivity: string; }
+interface Violation { id: string; influencer: string; type: string; severity: ViolationSeverity; description: string; timestamp: string; action: string; }
+interface AuditEntry { id: string; timestamp: string; user: string; action: string; target: string; result: string; details: string; }
+
+const realInfluencers = [
+  { name: 'Chiara Ferragni', handle: '@chiaraferragni', followers: '29.8M', engagement: '3.2%', category: 'Luxury Fashion', compatibility: 94, riskLevel: 12, sentiment: 87 },
+  { name: 'Kylie Jenner', handle: '@kyliejenner', followers: '400M', engagement: '2.8%', category: 'Beauty & Fashion', compatibility: 89, riskLevel: 18, sentiment: 82 },
+  { name: 'Addison Rae', handle: '@addisonraee', followers: '88M', engagement: '5.1%', category: 'Gen-Z Fashion', compatibility: 91, riskLevel: 8, sentiment: 91 },
+  { name: 'Bella Poarch', handle: '@bellapoarch', followers: '22M', engagement: '6.3%', category: 'Entertainment & Fashion', compatibility: 76, riskLevel: 35, sentiment: 68 },
+  { name: 'Hailey Bieber', handle: '@haileybieber', followers: '52M', engagement: '4.1%', category: 'Fashion & Beauty', compatibility: 92, riskLevel: 10, sentiment: 89 },
+  { name: 'Emma Chamberlain', handle: '@emmachamberlain', followers: '18M', engagement: '7.2%', category: 'Lifestyle & Fashion', compatibility: 88, riskLevel: 14, sentiment: 85 },
+  { name: 'Tiffany Young', handle: '@tiffanyyoung', followers: '8M', engagement: '4.8%', category: 'K-Pop & Fashion', compatibility: 85, riskLevel: 22, sentiment: 78 },
+  { name: 'Cameron Boyce', handle: '@cameronboyce', followers: '10M', engagement: '5.5%', category: 'Entertainment', compatibility: 45, riskLevel: 72, sentiment: 55 },
+];
+
+function getStatusColor(s: string) { return { ACTIVE: '#34d399', FLAGGED: '#fbbf24', 'UNDER REVIEW': '#60a5fa', 'ESCROW FROZEN': '#f87171' }[s] || '#64748b'; }
+function getSeverityColor(s: string) { return { LOW: '#34d399', MEDIUM: '#fbbf24', HIGH: '#fb923c', CRITICAL: '#f87171' }[s] || '#64748b'; }
+function getRiskColor(r: number) { return r < 20 ? '#34d399' : r < 40 ? '#fbbf24' : r < 60 ? '#fb923c' : r < 80 ? '#f97316' : '#f87171'; }
+function formatTime(ts: string) { return new Date(ts).toLocaleTimeString(); }

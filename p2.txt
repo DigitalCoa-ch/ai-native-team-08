@@ -1,0 +1,78 @@
+export default function BrandCommandCenter() {
+  const [campaigns, setCampaigns] = useState([
+    { id: '1', name: 'Chiara Ferragni x Meshki Summer 2026', influencer: 'Chiara Ferragni', status: 'ACTIVE' as CampaignStatus, budget: ',000', escrowBalance: ',500', aiConfidence: 94, violations: 0, lastActivity: '2 min ago' },
+    { id: '2', name: 'Kylie Jenner x Meshki Fall Collection', influencer: 'Kylie Jenner', status: 'FLAGGED' as CampaignStatus, budget: ' ,000', escrowBalance: '8,000', aiConfidence: 78, violations: 2, lastActivity: '15 min ago' },
+    { id: '3', name: 'Addison Rae x Meshki Holiday Drop', influencer: 'Addison Rae', status: 'ACTIVE' as CampaignStatus, budget: '\9,000', escrowBalance: ',500', aiConfidence: 89, violations: 0, lastActivity: '1 hour ago' },
+    { id: '4', name: 'Bella Poarch x Meshki Spring Launch', influencer: 'Bella Poarch', status: 'UNDER REVIEW' as CampaignStatus, budget: ',000', escrowBalance: '0,000', aiConfidence: 45, violations: 8, lastActivity: '3 hours ago' },
+    { id: '5', name: 'Hailey Bieber x Meshki Limited Edition', influencer: 'Hailey Bieber', status: 'ACTIVE' as CampaignStatus, budget: '=,000', escrowBalance: ',500', aiConfidence: 92, violations: 0, lastActivity: '30 min ago' },
+    { id: '6', name: 'Cameron Boyce x Meshki Global Campaign', influencer: 'Cameron Boyce', status: 'ESCROW FROZEN' as CampaignStatus, budget: '\90,000', escrowBalance: '%,000', aiConfidence: 38, violations: 12, lastActivity: '1 day ago' },
+  ]);
+  const [violations] = useState([
+    { id: 'v1', influencer: 'Bella Poarch', type: 'Sentiment Spike', severity: 'HIGH' as ViolationSeverity, description: 'Negative sentiment spike detected (+42%) following recent controversy', timestamp: new Date(Date.now() - 1800000).toISOString(), action: 'Escrow freeze recommended' },
+    { id: 'v2', influencer: 'Cameron Boyce', type: 'Brand Violation', severity: 'CRITICAL' as ViolationSeverity, description: 'Competitor brand endorsement detected - immediate action required', timestamp: new Date(Date.now() - 3600000).toISOString(), action: 'ESCROW FROZEN - Legal review pending' },
+    { id: 'v3', influencer: 'Tiffany Young', type: 'Disclosure Failure', severity: 'MEDIUM' as ViolationSeverity, description: 'Sponsored content posted without proper #ad disclosure', timestamp: new Date(Date.now() - 7200000).toISOString(), action: 'Warning sent to creator' },
+    { id: 'v4', influencer: 'Kylie Jenner', type: 'Risk Alert', severity: 'LOW' as ViolationSeverity, description: 'Minor sentiment fluctuation detected in beauty vertical', timestamp: new Date(Date.now() - 10800000).toISOString(), action: 'Monitoring flagged' },
+  ]);
+  const [auditLog] = useState([
+    { id: 'a1', timestamp: new Date(Date.now() - 600000).toISOString(), user: 'creatortrust-ai', action: 'ANALYSIS_COMPLETE', target: 'Addison Rae', result: 'APPROVED', details: 'Risk: LOW. Compatibility: 91%. No violations.' },
+    { id: 'a2', timestamp: new Date(Date.now() - 1200000).toISOString(), user: 'compliance-bot', action: 'VIOLATION_DETECTED', target: 'Bella Poarch', result: 'FLAGGED', details: 'Sentiment spike threshold exceeded (42%). Auto-escalated.' },
+    { id: 'a3', timestamp: new Date(Date.now() - 1800000).toISOString(), user: 'escrow-guardian', action: 'FUNDS_FROZEN', target: 'Cameron Boyce Campaign', result: 'FROZEN', details: 'Escrow %,000 frozen due to CRITICAL brand violation.' },
+    { id: 'a4', timestamp: new Date(Date.now() - 2400000).toISOString(), user: 'creatortrust-ai', action: 'SENTIMENT_ALERT', target: 'Kylie Jenner', result: 'MONITORING', details: 'Minor negative sentiment in beauty category. -8%.' },
+    { id: 'a5', timestamp: new Date(Date.now() - 3000000).toISOString(), user: 'review-committee', action: 'MANUAL_REVIEW_COMPLETE', target: 'Hailey Bieber', result: 'APPROVED', details: 'Manual review confirms excellent brand fit.' },
+  ]);
+  const [tab, setTab] = useState('overview');
+  const [time, setTime] = useState(new Date());
+  const [showModal, setShowModal] = useState(false);
+  const [modalData, setModalData] = useState<{influencer: string, violation: string} | null>(null);
+  const [alerts, setAlerts] = useState([
+    { type: 'ESCROW FREEZE', message: 'Cameron Boyce campaign escrow (%,000) frozen due to CRITICAL brand violation', severity: 'CRITICAL' },
+    { type: 'SENTIMENT SPIKE', message: 'Bella Poarch negative sentiment increased by 42% - Review required', severity: 'HIGH' },
+    { type: 'COMPATIBILITY', message: 'Chiara Ferragni brand compatibility score updated: 94%', severity: 'LOW' },
+  ]);
+  const [webhookEvents, setWebhookEvents] = useState([
+    { ts: '13:42:07', level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: '@fashionnova_ flagged by AI - 94% confidence. Escrow frozen. Campaign CP-001 under review.', color: '#f87171', transcript: '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=94%\n[13:42:10] ESCROW_FROZE triggered for CP-001 - amount: ,400 USD\n[13:42:11] Campaign status updated to FLAGGED', confidence: 94 },
+    { ts: '13:42:10', level: 'ACTION', title: 'Escrow Payment Frozen', description: ',400 held in escrow for CP-001 / @fashionnova_ pending HOTL review.', color: '#a78bfa' },
+    { ts: '13:42:11', level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign CP-001 status set to FLAGGED. AI confidence 94% exceeds threshold.', color: '#fbbf24' },
+  ]);
+  const [webhookActive, setWebhookActive] = useState(true);
+  const [hotlModal, setHotlModal] = useState<null|{campaign:{id:string,brand:string,influencer:string,budget:string,aiScore:number};violation:{type:string,confidence:number,transcript:string,action:string};auditEntry:{timestamp:string,actor:string,action:string,outcome:string,target:string}}>(null);
+
+  const triggerWebhook = useCallback(() => {
+    const ids = ['CP-001','CP-002','CP-003','CP-004','CP-005','CP-006','CP-007','CP-008'];
+    const infs = ['@fashionnova_','@glowbygrace','@stylemark','@luxe.edit','@everydayelegance','@minimalist.style','@aesthetic.ly','@streetwearh'];
+    const conf = 72 + Math.floor(Math.random() * 26);
+    const cid = ids[Math.floor(Math.random() * ids.length)];
+    const inf = infs[Math.floor(Math.random() * infs.length)];
+    const now = new Date().toTimeString().slice(0, 8);
+    const tx = '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=' + conf + '%\n[13:42:10] ESCROW_FROZE triggered for ' + cid + ' - amount: ,400 USD\n[13:42:11] Campaign status updated to FLAGGED';
+    const evs = [
+      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: inf + ' flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#f87171', transcript: tx, confidence: conf },
+      { ts: now, level: 'ACTION', title: 'Escrow Payment Frozen', description: ',400 held in escrow for ' + cid + ' / ' + inf + ' pending HOTL review.', color: '#a78bfa' },
+      { ts: now, level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign ' + cid + ' status set to FLAGGED. AI confidence ' + conf + '% exceeds threshold.', color: '#fbbf24' },
+    ];
+    setWebhookActive(true);
+    setWebhookEvents(prev => [...evs, ...prev]);
+    setHotlModal({ campaign: { id: cid, brand: 'Meshki', influencer: inf, budget: ',400', aiScore: conf }, violation: { type: 'Fake Engagement Pattern', confidence: conf, transcript: tx, action: 'ESCROW_FROZEN' }, auditEntry: { timestamp: now, actor: 'AI Agent', action: 'ESCROW_FROZEN', outcome: 'frozen', target: cid + ' / ' + inf } });
+    setTimeout(() => setWebhookActive(false), 10000);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+      const statuses: CampaignStatus[] = ['ACTIVE', 'FLAGGED', 'UNDER REVIEW', 'ESCROW FROZEN'];
+      const idx = Math.floor(Math.random() * campaigns.length);
+      setCampaigns(prev => prev.map((c, i) => i === idx ? { ...c, status: statuses[Math.floor(Math.random() * statuses.length)], lastActivity: 'Just now' } : c));
+      const alertTypes = [
+        { type: 'SENTIMENT', message: 'Real-time sentiment analysis updated for active campaigns', severity: 'LOW' as const },
+        { type: 'RISK SCAN', message: 'CreatorTrust AI completed risk scan on 8 influencers', severity: 'LOW' as const },
+        { type: 'COMPLIANCE', message: 'Automated compliance check passed for 4 campaigns', severity: 'LOW' as const },
+      ];
+      const newAlert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+      setAlerts(prev => [{ ...newAlert, type: newAlert.type }, ...prev.slice(0, 4)]);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const frozen = campaigns.filter(c => c.status === 'ESCROW FROZEN').reduce((a, c) => a + parseInt(c.escrowBalance.replace(/[\$,]/g, '')), 0);
+  const active = campaigns.filter(c => c.status === 'ACTIVE').length;
+  const avgConf = Math.round(campaigns.reduce((a, c) => a + c.aiConfidence, 0) / campaigns.length);

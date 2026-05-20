@@ -6,35 +6,19 @@ type CampaignStatus = 'ACTIVE' | 'FLAGGED' | 'UNDER REVIEW' | 'ESCROW FROZEN';
 type ViolationSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 interface Campaign {
-  id: string;
-  name: string;
-  influencer: string;
-  status: CampaignStatus;
-  budget: string;
-  escrowBalance: string;
-  aiConfidence: number;
-  violations: number;
-  lastActivity: string;
+  id: string; name: string; influencer: string; status: CampaignStatus;
+  budget: string; escrowBalance: string; aiConfidence: number;
+  violations: number; lastActivity: string;
 }
 
 interface Violation {
-  id: string;
-  influencer: string;
-  type: string;
-  severity: ViolationSeverity;
-  description: string;
-  timestamp: string;
-  action: string;
+  id: string; influencer: string; type: string;
+  severity: ViolationSeverity; description: string; timestamp: string; action: string;
 }
 
 interface AuditEntry {
-  id: string;
-  timestamp: string;
-  user: string;
-  action: string;
-  target: string;
-  result: string;
-  details: string;
+  id: string; timestamp: string; user: string; action: string;
+  target: string; result: string; details: string;
 }
 
 const realInfluencers = [
@@ -48,9 +32,9 @@ const realInfluencers = [
   { name: 'Cameron Boyce', handle: '@cameronboyce', followers: '10M', engagement: '5.5%', category: 'Entertainment', compatibility: 45, riskLevel: 72, sentiment: 55 },
 ];
 
-function getStatusColor(s: string) { return { ACTIVE: '#10b981', FLAGGED: '#f59e0b', 'UNDER REVIEW': '#3b82f6', 'ESCROW FROZEN': '#ef4444' }[s] || '#6b7280'; }
-function getSeverityColor(s: string) { return { LOW: '#22c55e', MEDIUM: '#f59e0b', HIGH: '#f97316', CRITICAL: '#ef4444' }[s] || '#6b7280'; }
-function getRiskColor(r: number) { return r < 20 ? '#10b981' : r < 40 ? '#22c55e' : r < 60 ? '#f59e0b' : r < 80 ? '#f97316' : '#ef4444'; }
+function getStatusColor(s: string) { return { ACTIVE: '#34d399', FLAGGED: '#f59e0b', 'UNDER REVIEW': '#60a5fa', 'ESCROW FROZEN': '#f87171' }[s] || '#64748b'; }
+function getSeverityColor(s: string) { return { LOW: '#34d399', MEDIUM: '#fbbf24', HIGH: '#fb923c', CRITICAL: '#f87171' }[s] || '#64748b'; }
+function getRiskColor(r: number) { return r < 20 ? '#34d399' : r < 40 ? '#fbbf24' : r < 60 ? '#fb923c' : r < 80 ? '#f97316' : '#f87171'; }
 function formatTime(ts: string) { return new Date(ts).toLocaleTimeString(); }
 
 export default function BrandCommandCenter() {
@@ -84,11 +68,10 @@ export default function BrandCommandCenter() {
     { type: 'SENTIMENT SPIKE', message: 'Bella Poarch negative sentiment increased by 42% - Review required', severity: 'HIGH' },
     { type: 'COMPATIBILITY', message: 'Chiara Ferragni brand compatibility score updated: 94%', severity: 'LOW' },
   ]);
-
   const [webhookEvents, setWebhookEvents] = useState([
-    { ts: '13:42:07', level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: '@fashionnova_ flagged by AI - 94% confidence. Escrow frozen. Campaign CP-001 under review.', color: '#ef4444', transcript: '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=94%\n[13:42:10] ESCROW_FROZE triggered for CP-001 - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED', confidence: 94 },
+    { ts: '13:42:07', level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: '@fashionnova_ flagged by AI - 94% confidence. Escrow frozen. Campaign CP-001 under review.', color: '#f87171', transcript: '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=94%\n[13:42:10] ESCROW_FROZE triggered for CP-001 - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED', confidence: 94 },
     { ts: '13:42:10', level: 'ACTION', title: 'Escrow Payment Frozen', description: '$12,400 held in escrow for CP-001 / @fashionnova_ pending HOTL review.', color: '#a78bfa' },
-    { ts: '13:42:11', level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign CP-001 status set to FLAGGED. AI confidence 94% exceeds threshold.', color: '#f59e0b' },
+    { ts: '13:42:11', level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign CP-001 status set to FLAGGED. AI confidence 94% exceeds threshold.', color: '#fbbf24' },
   ]);
   const [webhookActive, setWebhookActive] = useState(true);
   const [hotlModal, setHotlModal] = useState<null|{campaign:{id:string,brand:string,influencer:string,budget:string,aiScore:number};violation:{type:string,confidence:number,transcript:string,action:string};auditEntry:{timestamp:string,actor:string,action:string,outcome:string,target:string}}>(null);
@@ -102,9 +85,9 @@ export default function BrandCommandCenter() {
     const now = new Date().toTimeString().slice(0, 8);
     const tx = '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=' + conf + '%\n[13:42:10] ESCROW_FROZE triggered for ' + cid + ' - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED';
     const evs = [
-      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: inf + ' flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#ef4444', transcript: tx, confidence: conf },
+      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: inf + ' flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#f87171', transcript: tx, confidence: conf },
       { ts: now, level: 'ACTION', title: 'Escrow Payment Frozen', description: '$12,400 held in escrow for ' + cid + ' / ' + inf + ' pending HOTL review.', color: '#a78bfa' },
-      { ts: now, level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign ' + cid + ' status set to FLAGGED. AI confidence ' + conf + '% exceeds threshold.', color: '#f59e0b' },
+      { ts: now, level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign ' + cid + ' status set to FLAGGED. AI confidence ' + conf + '% exceeds threshold.', color: '#fbbf24' },
     ];
     setWebhookActive(true);
     setWebhookEvents(prev => [...evs, ...prev]);
@@ -112,35 +95,16 @@ export default function BrandCommandCenter() {
     setTimeout(() => setWebhookActive(false), 10000);
   }, []);
 
-
-  useEffect(() => {
-    const ids = ['CP-001','CP-002','CP-003','CP-004','CP-005','CP-006','CP-007','CP-008'];
-    const infs = ['@fashionnova_','@glowbygrace','@stylemark','@luxe.edit','@everydayelegance','@minimalist.style','@aesthetic.ly','@streetwearh'];
-    const conf = 72 + Math.floor(Math.random() * 26);
-    const cid = ids[Math.floor(Math.random() * ids.length)];
-    const inf = infs[Math.floor(Math.random() * infs.length)];
-    const now = new Date().toTimeString().slice(0, 8);
-    const tx = '[13:42:07] POST /api/v1/webhooks/influencer-scan\n[13:42:08] AI analysis started... scanning 48 posts, 12.4K comments\n[13:42:09] WARNING: Follower engagement anomaly detected. Ratio: 3.2:1\n[13:42:10] Flagging: fake_follower_pattern confidence=' + conf + '%\n[13:42:10] ESCROW_FROZE triggered for ' + cid + ' - amount: $12,400 USD\n[13:42:11] Campaign status updated to FLAGGED';
-    const evs = [
-      { ts: now, level: 'CRITICAL', title: 'Fake Engagement Pattern Detected', description: inf + ' flagged by AI - ' + conf + '% confidence. Escrow frozen. Campaign ' + cid + ' under review.', color: '#ef4444', transcript: tx, confidence: conf },
-      { ts: now, level: 'ACTION', title: 'Escrow Payment Frozen', description: '$12,400 held in escrow for ' + cid + ' / ' + inf + ' pending HOTL review.', color: '#a78bfa' },
-      { ts: now, level: 'AUDIT', title: 'Campaign FLAGGED', description: 'Campaign ' + cid + ' status set to FLAGGED. AI confidence ' + conf + '% exceeds threshold.', color: '#f59e0b' },
-    ];
-    setWebhookActive(true);
-    setWebhookEvents(prev => [...evs, ...prev]);
-    setHotlModal({ campaign: { id: cid, brand: 'Meshki', influencer: inf, budget: '$12,400', aiScore: conf }, violation: { type: 'Fake Engagement Pattern', confidence: conf, transcript: tx, action: 'ESCROW_FROZEN' }, auditEntry: { timestamp: now, actor: 'AI Agent', action: 'ESCROW_FROZEN', outcome: 'frozen', target: cid + ' / ' + inf } });
-    setTimeout(() => setWebhookActive(false), 10000);
-  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
-      const statuses = ['ACTIVE', 'FLAGGED', 'UNDER REVIEW', 'ESCROW FROZEN'];
+      const statuses: CampaignStatus[] = ['ACTIVE', 'FLAGGED', 'UNDER REVIEW', 'ESCROW FROZEN'];
       const idx = Math.floor(Math.random() * campaigns.length);
       setCampaigns(prev => prev.map((c, i) => i === idx ? { ...c, status: statuses[Math.floor(Math.random() * statuses.length)], lastActivity: 'Just now' } : c));
       const alertTypes = [
-        { type: 'SENTIMENT', message: 'Real-time sentiment analysis updated for active campaigns', severity: 'LOW' },
-        { type: 'RISK SCAN', message: 'CreatorTrust AI completed risk scan on 8 influencers', severity: 'LOW' },
-        { type: 'COMPLIANCE', message: 'Automated compliance check passed for 4 campaigns', severity: 'LOW' },
+        { type: 'SENTIMENT', message: 'Real-time sentiment analysis updated for active campaigns', severity: 'LOW' as const },
+        { type: 'RISK SCAN', message: 'CreatorTrust AI completed risk scan on 8 influencers', severity: 'LOW' as const },
+        { type: 'COMPLIANCE', message: 'Automated compliance check passed for 4 campaigns', severity: 'LOW' as const },
       ];
       const newAlert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
       setAlerts(prev => [{ ...newAlert, type: newAlert.type }, ...prev.slice(0, 4)]);
@@ -153,291 +117,18 @@ export default function BrandCommandCenter() {
   const avgConf = Math.round(campaigns.reduce((a, c) => a + c.aiConfidence, 0) / campaigns.length);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff', fontFamily: 'Inter, sans-serif' }}>
-      <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } } @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } } .metric-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid #2d2d44; border-radius: 12px; padding: 20px; } .tab-btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s; } .tab-btn.active { background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%); color: #fff; } .tab-btn:not(.active) { background: #1f2937; color: #9ca3af; } .tab-btn:not(.active):hover { background: #374151; } .table-row { border-bottom: 1px solid #1f2937; transition: background 0.2s; } .table-row:hover { background: #1f2937; } .panel { background: #111118; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; } .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; } .modal-content { background: #1a1a2e; border: 1px solid #2d2d44; border-radius: 16px; padding: 32px; max-width: 500px; width: 90%; }`}</style>
-      
-      {showModal && modalData && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h2 style={{ margin: '0 0 8px 0', fontSize: '20px', color: '#fff' }}>Human Review Required</h2>
-            <p style={{ margin: '0 0 20px 0', color: '#6b7280', fontSize: '14px' }}>AI confidence below threshold. Manual review needed.</p>
-            <div style={{ background: '#111118', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-              <p style={{ margin: '0 0 8px 0', color: '#9ca3af', fontSize: '12px' }}>INFLUENCER</p>
-              <p style={{ margin: '0', color: '#fff', fontSize: '16px', fontWeight: 600 }}>{modalData.influencer}</p>
-              <p style={{ margin: '8px 0 0 0', color: '#9ca3af', fontSize: '12px' }}>VIOLATION TYPE</p>
-              <p style={{ margin: 0, color: '#ef4444', fontSize: '14px' }}>{modalData.violation}</p>
-            </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={() => setShowModal(false)} style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #374151', background: 'transparent', color: '#9ca3af', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>Dismiss</button>
-              <button onClick={() => { setShowModal(false); alert('Human review submitted!'); }} style={{ flex: 1, padding: '12px', borderRadius: '8px', border: 'none', background: 'linear-gradient(135deg, #ec4899, #a855f7)', color: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>Approve Campaign</button>
-            </div>
-          </div>
-        </div>
-      )}
+    <div style={{ minHeight: '100vh', background: '#020209', color: '#f1f5f9', fontFamily: "'Inter', sans-serif", overflowX: 'hidden' }}>
 
-      <header style={{ padding: '20px 32px', borderBottom: '1px solid #1f2937', background: 'linear-gradient(180deg, #111118 0%, #0a0a0f 100%)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, background: 'linear-gradient(135deg, #ec4899 0%, #a855f7 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BRAND COMMAND CENTER</h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', background: '#1f2937', borderRadius: '9999px' }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', animation: 'pulse 2s infinite' }} />
-                <span style={{ fontSize: '10px', color: '#10b981', fontWeight: 600 }}>LIVE</span>
-              </div>
-            </div>
-            <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>CreatorTrust AI powered brand safety monitoring for <span style={{ color: '#ec4899', fontWeight: 600 }}>Meshki</span></p>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <p style={{ margin: 0, fontSize: '11px', color: '#6b7280' }}>Last updated</p>
-            <p style={{ margin: 0, fontSize: '14px', fontFamily: 'monospace', color: '#fff' }}>{time.toLocaleTimeString()}</p>
-          </div>
-        </div>
-      </header>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', padding: '24px 32px', background: '#0d0d14' }}>
-        <div className="metric-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Active Campaigns</div>
-          <div style={{ fontSize: '28px', fontWeight: 800, color: '#10b981' }}>{active}</div>
-          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>of {campaigns.length} total</div>
-        </div>
-        <div className="metric-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Escrow Frozen</div>
-          <div style={{ fontSize: '28px', fontWeight: 800, color: '#ef4444' }}>${(frozen / 1000).toFixed(0)}K</div>
-          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>protected funds</div>
-        </div>
-        <div className="metric-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>AI Confidence</div>
-          <div style={{ fontSize: '28px', fontWeight: 800, color: '#a855f7' }}>{avgConf}%</div>
-          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>avg across campaigns</div>
-        </div>
-        <div className="metric-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Active Violations</div>
-          <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b' }}>{violations.length}</div>
-          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>require attention</div>
-        </div>
-      </div>
-
-      <div style={{ padding: '0 32px 20px' }}>
-        <div style={{ border: '1px solid rgba(239,68,68,0.3)', background: 'linear-gradient(135deg,#0f172a,#1a0a0a)', borderRadius: 12, padding: '16px 20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: webhookActive ? '#ef4444' : '#475569', animation: webhookActive ? 'ping 1s infinite' : 'none' }} />
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em' }}>AI Threat Detection - Live Webhook Stream</span>
-            </div>
-            <span style={{ fontSize: '10px', color: '#475569', fontFamily: 'monospace' }}>{webhookActive ? 'MONITORING' : 'STANDBY'}</span>
-          </div>
-          <div style={{ display: 'grid', gap: 8 }}>
-            {webhookEvents.map((ev, i) => (
-              <div key={i} style={{ padding: '10px 12px', borderRadius: 8, background: ev.color + '10', border: '1px solid ' + ev.color + '28', animation: 'slideUp 0.4s ease both' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: '9px', padding: '2px 5px', borderRadius: 3, background: ev.color + '22', color: ev.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ev.level}</span>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#f1f5f9' }}>{ev.title}</span>
-                  </div>
-                  <span style={{ fontSize: '10px', color: '#475569', fontFamily: 'monospace' }}>{ev.ts}</span>
-                </div>
-                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: ev.transcript ? 6 : 0 }}>{ev.description}</div>
-                {ev.transcript && (
-                  <div style={{ background: '#030712', borderRadius: 6, padding: '8px 10px', fontFamily: 'monospace', fontSize: '10px', color: '#64748b', whiteSpace: 'pre-wrap', marginBottom: 6, border: '1px solid #1e293b' }}>
-                    <div style={{ color: '#475569', marginBottom: 2, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>AI Transcript</div>
-                    {ev.transcript}
-                  </div>
-                )}
-                {ev.confidence !== undefined && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ flex: 1, height: 3, background: '#1e293b', borderRadius: 3, overflow: 'hidden' }}>
-                      <div style={{ width: ev.confidence + '%', height: '100%', background: ev.confidence > 80 ? '#ef4444' : ev.confidence > 60 ? '#f59e0b' : '#34d399', borderRadius: 3 }} />
-                    </div>
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: ev.confidence > 80 ? '#ef4444' : '#f59e0b', fontFamily: 'monospace' }}>{ev.confidence}%</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          <button onClick={triggerWebhook} style={{ marginTop: 12, width: '100%', padding: '8px', borderRadius: 8, border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.05)', color: '#ef4444', fontWeight: 700, fontSize: '11px', cursor: 'pointer', fontFamily: 'monospace', letterSpacing: '0.06em' }}>
-            [ SIMULATE WEBHOOK TRIGGER ]
-          </button>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: '8px', padding: '20px 32px', borderBottom: '1px solid #1f2937' }}>
-        {['overview', 'influencers', 'campaigns', 'violations', 'audit'].map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`tab-btn ${tab === t ? 'active' : ''}`} style={{ textTransform: 'capitalize' }}>{t}</button>
-        ))}
-      </div>
-
-      <div style={{ padding: '24px 32px' }}>
-        {tab === 'overview' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div className="panel">
-              <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#9ca3af', textTransform: 'uppercase' }}>Live Risk Alerts</h3>
-              {alerts.map((a, i) => (
-                <div key={i} style={{ padding: '12px', background: a.severity === 'CRITICAL' ? 'rgba(239,68,68,0.1)' : a.severity === 'HIGH' ? 'rgba(249,115,22,0.1)' : 'rgba(34,197,94,0.1)', borderLeft: `3px solid ${getSeverityColor(a.severity)}`, borderRadius: '0 8px 8px 0', marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: getSeverityColor(a.severity), textTransform: 'uppercase' }}>{a.type}</span>
-                    <span style={{ fontSize: '10px', color: '#6b7280' }}>{time.toLocaleTimeString()}</span>
-                  </div>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#fff' }}>{a.message}</p>
-                </div>
-              ))}
-            </div>
-            <div className="panel">
-              <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#9ca3af', textTransform: 'uppercase' }}>Campaign Status</h3>
-              {campaigns.map(c => (
-                <div key={c.id} className="table-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0' }}>
-                  <div>
-                    <div style={{ fontSize: '13px', fontWeight: 600 }}>{c.influencer}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280' }}>{c.budget}</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: '11px', color: '#6b7280' }}>{c.aiConfidence}%</span>
-                    <span style={{ padding: '4px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: `${getStatusColor(c.status)}20`, color: getStatusColor(c.status) }}>{c.status}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab === 'influencers' && (
-          <div className="panel">
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#9ca3af', textTransform: 'uppercase' }}>CreatorTrust AI Analysis - Meshki Brand Partners</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #1f2937' }}>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>INFLUENCER</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>FOLLOWERS</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>COMPATIBILITY</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>RISK LEVEL</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>SENTIMENT</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>STATUS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {realInfluencers.map((inf, i) => (
-                  <tr key={i} className="table-row">
-                    <td style={{ padding: '12px 8px' }}>
-                      <div style={{ fontSize: '13px', fontWeight: 600 }}>{inf.name}</div>
-                      <div style={{ fontSize: '11px', color: '#6b7280' }}>{inf.handle}</div>
-                    </td>
-                    <td style={{ padding: '12px 8px', fontSize: '12px' }}>{inf.followers}</td>
-                    <td style={{ padding: '12px 8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '50px', height: '4px', background: '#1f2937', borderRadius: '2px' }}>
-                          <div style={{ width: `${inf.compatibility}%`, height: '100%', background: inf.compatibility > 80 ? '#10b981' : inf.compatibility > 60 ? '#f59e0b' : '#ef4444', borderRadius: '2px' }} />
-                        </div>
-                        <span style={{ fontSize: '11px', color: '#fff' }}>{inf.compatibility}%</span>
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, background: `${getRiskColor(inf.riskLevel)}20`, color: getRiskColor(inf.riskLevel) }}>{inf.riskLevel < 20 ? 'LOW' : inf.riskLevel < 40 ? 'MEDIUM' : inf.riskLevel < 70 ? 'HIGH' : 'CRITICAL'}</span>
-                    </td>
-                    <td style={{ padding: '12px 8px', fontSize: '12px' }}>{inf.sentiment}%</td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {inf.riskLevel > 60 ? (
-                        <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, background: '#ef4444', color: '#fff', animation: 'blink 1s infinite' }}>ESCROW FROZEN</span>
-                      ) : (
-                        <span style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, background: '#10b98120', color: '#10b981' }}>ACTIVE</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {tab === 'campaigns' && (
-          <div className="panel">
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#9ca3af', textTransform: 'uppercase' }}>Live Campaign Table</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #1f2937' }}>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>CAMPAIGN</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>INFLUENCER</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>STATUS</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>BUDGET</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>ESCROW</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>AI CONFIDENCE</th>
-                  <th style={{ textAlign: 'left', padding: '12px 8px', fontSize: '11px', color: '#6b7280' }}>VIOLATIONS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {campaigns.map(c => (
-                  <tr key={c.id} className="table-row">
-                    <td style={{ padding: '12px 8px', fontSize: '13px', fontWeight: 600 }}>{c.name}</td>
-                    <td style={{ padding: '12px 8px', fontSize: '12px' }}>{c.influencer}</td>
-                    <td style={{ padding: '12px 8px' }}>
-                      <span style={{ padding: '4px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: 700, background: `${getStatusColor(c.status)}20`, color: getStatusColor(c.status) }}>{c.status}</span>
-                    </td>
-                    <td style={{ padding: '12px 8px', fontSize: '12px' }}>{c.budget}</td>
-                    <td style={{ padding: '12px 8px', fontSize: '12px' }}>{c.escrowBalance}</td>
-                    <td style={{ padding: '12px 8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '60px', height: '4px', background: '#1f2937', borderRadius: '2px' }}>
-                          <div style={{ width: `${c.aiConfidence}%`, height: '100%', background: c.aiConfidence > 80 ? '#10b981' : c.aiConfidence > 50 ? '#f59e0b' : '#ef4444', borderRadius: '2px' }} />
-                        </div>
-                        <span style={{ fontSize: '11px', color: '#fff' }}>{c.aiConfidence}%</span>
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px 8px', fontSize: '12px', color: c.violations > 5 ? '#ef4444' : '#fff' }}>{c.violations}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {tab === 'violations' && (
-          <div className="panel">
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#9ca3af', textTransform: 'uppercase' }}>Active Violations Feed</h3>
-            {violations.map(v => (
-              <div key={v.id} style={{ padding: '16px', background: '#1f2937', borderRadius: '8px', marginBottom: '12px', borderLeft: `3px solid ${getSeverityColor(v.severity)}` }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>{v.influencer}</span>
-                    <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700, background: `${getSeverityColor(v.severity)}20`, color: getSeverityColor(v.severity) }}>{v.severity}</span>
-                    <span style={{ fontSize: '11px', color: '#6b7280' }}>{v.type}</span>
-                  </div>
-                  <span style={{ fontSize: '11px', color: '#6b7280' }}>{formatTime(v.timestamp)}</span>
-                </div>
-                <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#9ca3af' }}>{v.description}</p>
-                <div style={{ fontSize: '11px', color: getSeverityColor(v.severity), fontWeight: 600 }}>{v.action}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {tab === 'audit' && (
-          <div className="panel">
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#9ca3af', textTransform: 'uppercase' }}>Audit Log - CreatorTrust AI</h3>
-            {auditLog.map(a => (
-              <div key={a.id} className="table-row" style={{ padding: '12px 0' }}>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '80px', flexShrink: 0 }}>
-                    <span style={{ fontSize: '10px', color: '#6b7280' }}>{formatTime(a.timestamp)}</span>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#a855f7', background: '#a855f720', padding: '2px 6px', borderRadius: '4px' }}>{a.user}</span>
-                      <span style={{ fontSize: '11px', color: '#9ca3af' }}>{a.action}</span>
-                      <span style={{ fontSize: '11px', fontWeight: 600, color: '#fff' }}>{a.target}</span>
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6b7280' }}>{a.details}</div>
-                  </div>
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: a.result === 'APPROVED' ? '#10b981' : a.result === 'FROZEN' ? '#ef4444' : '#f59e0b' }}>{a.result}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <footer style={{ padding: '16px 32px', borderTop: '1px solid #1f2937', textAlign: 'center' }}>
-        <p style={{ margin: 0, fontSize: '11px', color: '#6b7280' }}>
-          CreatorTrust AI Brand Command Center v2.1 — Meshki Enterprise Dashboard — Real-time influencer governance platform
-        </p>
-      </footer>
-    </div>
-  );
-}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a14; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::selection { background: rgba(99,102,241,0.3); color: #f1f5f9; }
+        @keyframes ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes ticker { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes glow-pulse { 0%, 100% { box-shadow: 0 0 20px rgba(99,102,241,0.15); } 50% { box-shadow: 0 0 40px rgba(99,102,241,0.35); } }
+        @keyframes orb-drift { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -20px)
