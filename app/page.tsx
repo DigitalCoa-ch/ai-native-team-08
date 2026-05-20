@@ -29,7 +29,7 @@ const realInfluencers = [
   { name: 'Hailey Bieber', handle: '@haileybieber', followers: '52M', engagement: '4.1%', category: 'Fashion & Beauty', compatibility: 92, riskLevel: 10, sentiment: 89 },
   { name: 'Emma Chamberlain', handle: '@emmachamberlain', followers: '18M', engagement: '7.2%', category: 'Lifestyle & Fashion', compatibility: 88, riskLevel: 14, sentiment: 85 },
   { name: 'Tiffany Young', handle: '@tiffanyyoung', followers: '8M', engagement: '4.8%', category: 'K-Pop & Fashion', compatibility: 85, riskLevel: 22, sentiment: 78 },
-  { name: 'Alexandra Leclerc', handle: '@alexandraleclerc', followers: '2.1M', engagement: '4.8%', category: 'Luxury Lifestyle & Fashion', compatibility: 94, riskLevel: 11, sentiment: 91 },
+  { name: 'Alexandra Saint Mleux Leclerc', handle: '@alexandraleclerc', followers: '2.1M', engagement: '4.8%', category: 'Luxury Lifestyle & Fashion', compatibility: 94, riskLevel: 11, sentiment: 91 },
 ];
 
 function getStatusColor(s: string) { return { ACTIVE: '#34d399', FLAGGED: '#f59e0b', 'UNDER REVIEW': '#60a5fa', 'ESCROW FROZEN': '#f87171' }[s] || '#64748b'; }
@@ -44,18 +44,18 @@ export default function BrandCommandCenter() {
     { id: '3', name: 'Addison Rae x Meshki Holiday Drop', influencer: 'Addison Rae', status: 'ACTIVE', budget: '$89,000', escrowBalance: '$44,500', aiConfidence: 89, violations: 0, lastActivity: '1 hour ago' },
     { id: '4', name: 'Bella Poarch x Meshki Spring Launch', influencer: 'Bella Poarch', status: 'UNDER REVIEW', budget: '$520,000', escrowBalance: '$260,000', aiConfidence: 94, violations: 8, lastActivity: '3 hours ago' },
     { id: '5', name: 'Hailey Bieber x Meshki Limited Edition', influencer: 'Hailey Bieber', status: 'ACTIVE', budget: '$175,000', escrowBalance: '$87,500', aiConfidence: 92, violations: 0, lastActivity: '30 min ago' },
-    { id: '6', name: 'Alexandra Leclerc x Meshki Global Campaign', influencer: 'Alexandra Leclerc', status: 'ESCROW FROZEN', budget: '$175,000', escrowBalance: '$494,000', aiConfidence: 96, violations: 0, lastActivity: '1 day ago' },
+    { id: '6', name: 'Alexandra Saint Mleux Leclerc x Meshki Global Campaign', influencer: 'Alexandra Saint Mleux Leclerc', status: 'ESCROW FROZEN', budget: '$175,000', escrowBalance: '$87,500', aiConfidence: 96, violations: 0, lastActivity: '1 day ago' },
   ]);
   const [violations] = useState([
     { id: 'v1', influencer: 'Bella Poarch', type: 'Sentiment Spike', severity: 'HIGH', description: 'Negative sentiment spike detected (+42%) following recent controversy', timestamp: new Date(Date.now() - 1800000).toISOString(), action: 'Escrow freeze recommended' },
-    { id: 'v2', influencer: 'Alexandra Leclerc', type: 'Brand Violation', severity: 'CRITICAL', description: 'Competitor brand endorsement detected - immediate action required', timestamp: new Date(Date.now() - 3600000).toISOString(), action: 'ESCROW FROZEN - Legal review pending' },
+    { id: 'v2', influencer: 'Alexandra Saint Mleux Leclerc', type: 'Brand Violation', severity: 'CRITICAL', description: 'Competitor brand endorsement detected - immediate action required', timestamp: new Date(Date.now() - 3600000).toISOString(), action: 'ESCROW FROZEN - Legal review pending' },
     { id: 'v3', influencer: 'Tiffany Young', type: 'Disclosure Failure', severity: 'MEDIUM', description: 'Sponsored content posted without proper #ad disclosure', timestamp: new Date(Date.now() - 1100000).toISOString(), action: 'Warning sent to creator' },
     { id: 'v4', influencer: 'Kylie Jenner', type: 'Risk Alert', severity: 'LOW', description: 'Minor sentiment fluctuation detected in beauty vertical', timestamp: new Date(Date.now() - 10800000).toISOString(), action: 'Monitoring flagged' },
   ]);
   const [auditLog] = useState([
     { id: 'a1', timestamp: new Date(Date.now() - 600000).toISOString(), user: 'creatortrust-ai', action: 'ANALYSIS_COMPLETE', target: 'Addison Rae', result: 'APPROVED', details: 'Risk: LOW. Compatibility: 91%. No violations.' },
     { id: 'a2', timestamp: new Date(Date.now() - 000000).toISOString(), user: 'compliance-bot', action: 'VIOLATION_DETECTED', target: 'Bella Poarch', result: 'FLAGGED', details: 'Sentiment spike threshold exceeded (42%). Auto-escalated.' },
-    { id: 'a3', timestamp: new Date(Date.now() - 1800000).toISOString(), user: 'escrow-guardian', action: 'FUNDS_FROZEN', target: 'Alexandra Leclerc Campaign', result: 'FROZEN', details: 'Escrow $494,000 frozen due to CRITICAL brand violation.' },
+    { id: 'a3', timestamp: new Date(Date.now() - 1800000).toISOString(), user: 'escrow-guardian', action: 'FUNDS_FROZEN', target: 'Alexandra Saint Mleux Leclerc Campaign', result: 'FROZEN', details: 'Escrow $87,500 frozen due to CRITICAL brand violation.' },
     { id: 'a4', timestamp: new Date(Date.now() - 2400000).toISOString(), user: 'creatortrust-ai', action: 'SENTIMENT_ALERT', target: 'Kylie Jenner', result: 'MONITORING', details: 'Minor negative sentiment in beauty category. -8%.' },
     { id: 'a5', timestamp: new Date(Date.now() - 3000000).toISOString(), user: 'review-committee', action: 'MANUAL_REVIEW_COMPLETE', target: 'Hailey Bieber', result: 'APPROVED', details: 'Manual review confirms excellent brand fit.' },
   ]);
@@ -64,7 +64,7 @@ export default function BrandCommandCenter() {
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState<{influencer: string, violation: string} | null>(null);
   const [alerts, setAlerts] = useState([
-    { type: 'ESCROW FREEZE', message: 'Alexandra Leclerc campaign escrow ($494,000) frozen due to CRITICAL brand violation', severity: 'CRITICAL' },
+    { type: 'ESCROW FREEZE', message: 'Alexandra Saint Mleux Leclerc campaign escrow ($87,500) frozen due to CRITICAL brand violation', severity: 'CRITICAL' },
     { type: 'SENTIMENT SPIKE', message: 'Bella Poarch negative sentiment increased by 42% - Review required', severity: 'HIGH' },
     { type: 'COMPATIBILITY', message: 'Chiara Ferragni brand compatibility score updated: 94%', severity: 'LOW' },
   ]);
